@@ -185,7 +185,24 @@ CREATE TABLE addresses(
 );
 ```
 
-Let's do another;
+Now that we have created the table let's bulk upload the data. In
+`bulk_load/addresses.psql` write the command to bull upload information from
+the addresses csv file.
+
+```bash
+\copy addresses(no,name) from 'data/addresses.csv' with(header true, format csv)
+```
+
+and in psql let;s run the script
+
+```bash
+\i <path/to/file>
+```
+
+While we're bulk uploading data lets lets bulk upload people as well.  You can
+do this on your own.
+
+Now we're going to alter the table a bit;
  this time we'll add a reference
  from the `people` table to the `addresses` table.
 
