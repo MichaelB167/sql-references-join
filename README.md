@@ -153,15 +153,11 @@ Specifically, we'll add a reference to the city in which each person was born.
 Adding a new foreign key column is just like adding any other new column --
 it's an `ALTER TABLE` operation.
 
-Conventionally, a foreign key is named
- for the singular of the name of the table being referenced,
- with the column being referenced appended after an underscore.
-So, if we're adding a reference to the `cities` table and its `id` column we'll
- create a column called `city_id`.
-However, _this convention should not be followed
- when there is a semantically superior name available._
-In this case, `born_in_id` is a more appropriate name than `city_id`
- for the column.
+ Watch as i:
+
+ -   Create A table
+ -   Bulk upload a csv
+ -   Alter a table
 
 ### Code Along : Create a Foreign Key
 
@@ -193,7 +189,7 @@ the addresses csv file.
 \copy addresses(no,name) from 'data/addresses.csv' with(header true, format csv)
 ```
 
-and in psql let;s run the script
+and in psql let's run the script
 
 ```bash
 \i <path/to/file>
@@ -214,23 +210,15 @@ ALTER TABLE people
 
 ### Lab : Create a Foreign Key
 
-Write SQL code inside `alter_table/pets.sql`
-that adds an owner reference to the pets table.
+Write SQL code inside the various script files that adds an owner reference to
+the pets table.  You will need to repeat many of the steps we have just
+performed in order to do this.
 
 ---
 
 ## Relate Rows in Different Tables
 
-### Demo : Relate Rows in Different Tables
-
-Now that we've created some foreign key columns,
- it's possible to insert new rows into those tables
- that reference other tables,
- or even to update existing rows and add new references that way.
-We could easily do this with the `born_in_id` column we just created.
-
-Note that a foreign key constraint will disallow invalid values
- in the referencing column.
+Now let's do some more work with the addresses table.
 
 ### Code Along : Relate Rows in Different Tables
 
@@ -244,9 +232,14 @@ INSERT INTO addresses(no,name, city_id)
 ;
 ```
 
-Next, let's load up all the addresses from `addresses.csv`;
- once those are loaded, we can then update the `people` table
- by associating people with some of those new addresses.
+Let's check to make sure we updated the entry:
+
+```sql
+SELECT name FROM addresses WHERE city_id = 1;
+```
+
+Now update the `people` table
+ by associating people with some addresses.
 
 ```sql
 UPDATE people AS p        -- alias `people` as p
@@ -255,6 +248,9 @@ UPDATE people AS p        -- alias `people` as p
       WHERE a.id = p.id   -- arbitarily associate person 1 with address 1
 ;
 ```
+
+You people IDs and address IDs may not be in sync, you may need to do some math
+here.
 
 ### Lab : Relate Rows in Different Tables
 
@@ -330,10 +326,9 @@ To get a list of all people, along with their address and city,
 we could write
 
 ```sql
-SELECT p.surname, p.given_name, a.name AS street, c.name AS city, c.country
+SELECT p.surname, p.given_name, a.name AS street
   FROM people p
   INNER JOIN addresses a  ON p.address_id = a.id
-  INNER JOIN cities c     ON a.city_id = c.id
 ;
 ```
 
