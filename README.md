@@ -41,8 +41,8 @@ How might we do that?
 |:--:|:----------:|:--------:|:-----------------:|
 |  1 | Antony     | Donovan  | C                 |
 |  2 | Jason      | Weeks    | JavaScript        |
-|  3 | Jeff       | Horn     | Ruby              |
-|  4 | Matt       | Brendzel | LOLCODE           |
+|  3 | Lauren     | Fazah    | Ruby              |
+|  4 | Ross       | Degnen   | LOLCODE           |
 
 **lunches**
 
@@ -60,9 +60,9 @@ What if we were to put nametags on each of the lunches,
 
 | id | developer | main_course                          | side_dish          |
 |:--:|:---------:|:------------------------------------:|:------------------:|
-|  1 | Jeff      | salmon and tuna sushi rolls          | chili              |
+|  1 | Lauren    | salmon and tuna sushi rolls          | chili              |
 |  2 | Antony    | cheese sandwich on gluten-free bread | salad              |
-|  3 | Matt      | roast beef sandwich                  | chips              |
+|  3 | Ross      | roast beef sandwich                  | chips              |
 |  4 | Jason     | chicken sandwich                     | steamed vegetables |
 
 We've now associated (i.e. related)
@@ -155,9 +155,10 @@ it's an `ALTER TABLE` operation.
 
  Watch as i:
 
- -   Create A table
- -   Bulk upload a csv
- -   Alter a table
+ -   Create a `people` table
+ -   Create a `cities` table
+ -   Alter `people` table to have `born_in_id` and relate it to the `cities`
+ table.
 
 ### Code Along : Create a Foreign Key
 
@@ -181,23 +182,6 @@ CREATE TABLE addresses(
 );
 ```
 
-Now that we have created the table let's bulk upload the data. In
-`bulk_load/addresses.psql` write the command to bull upload information from
-the addresses csv file.
-
-```bash
-\copy addresses(no,name) from 'data/addresses.csv' with(header true, format csv)
-```
-
-and in psql let's run the script
-
-```bash
-\i <path/to/file>
-```
-
-While we're bulk uploading data lets lets bulk upload people as well.  You can
-do this on your own.
-
 Now we're going to alter the table a bit;
  this time we'll add a reference
  from the `people` table to the `addresses` table.
@@ -218,7 +202,18 @@ performed in order to do this.
 
 ## Relate Rows in Different Tables
 
-Now let's do some more work with the addresses table.
+### Demo : Relate Rows in Different Tables
+
+Now that we've created some foreign key columns, it's possible to insert new
+rows into those tables that reference other tables, or even to update existing
+rows and add new references that way. We could easily do this with the
+born_in_id column we just created.
+
+Note that a foreign key constraint will disallow invalid values in the
+referencing column.
+
+-   Insets a city into the `cities` table
+-   Insert a person in the `people` table that refrences a the city
 
 ### Code Along : Relate Rows in Different Tables
 
@@ -237,6 +232,22 @@ Let's check to make sure we updated the entry:
 ```sql
 SELECT name FROM addresses WHERE city_id = 1;
 ```
+
+Now that we have created the table let's bulk upload the data. In
+`bulk_load/addresses.psql` write the command to bull upload information from
+the addresses csv file.
+
+```bash
+\copy addresses(no,name) from 'data/addresses.csv' with(header true, format csv)
+```
+
+and in psql let's run the script
+
+```bash
+\i <path/to/file>
+```
+
+Let's bulk upload some people using the same process as well.
 
 Now update the `people` table
  by associating people with some addresses.
@@ -276,14 +287,23 @@ One possible way to accomplish this is to add a special clause,
  this allows queries to return associated data from two tables as
  a single row.
 
+Note: The number may vary here due to IDs in the database, and the math you
+used earlier.
+
 ```sql
 SELECT c.name, COUNT(*)
   FROM people p
   INNER JOIN cities c ON p.born_in_id = c.id
     GROUP BY c.name
-    HAVING COUNT(*) > 1
   -- list cities by how many people were born there
-  -- and only show cities where more than one person was born
+;
+```
+
+```sql
+SELECT c.name, COUNT(*)
+  FROM people p
+  INNER JOIN cities c ON p.address_id = c.id
+    GROUP BY c.name
 ;
 ```
 
@@ -299,9 +319,7 @@ SELECT c.name, COUNT(*)
   FROM cities c
   INNER JOIN people p ON p.born_in_id = c.id
     GROUP BY c.name
-    HAVING COUNT(*) > 1
   -- list cities by how many people were born there
-  -- and only show cities where more than one person was born
 ;
 ```
 
@@ -320,7 +338,8 @@ SELECT p.given_name, p.surname
 Let's write some queries that focus on people, addresses, and cities.
 
 We'll run the script in `update/addresses.sql` to
-arbitrarily associates addresses with cities.
+arbitrarily associates addresses with cities.  Be sure to check that the people
+IDs and addresses correctly align.
 
 To get a list of all people, along with their address and city,
 we could write
