@@ -134,7 +134,7 @@ psql
 psql (9.4.5)
 Type "help" for help.
 
-wdi=> CREATE DATABASE "sq-join" TEMPLATE "sql-crud";
+wdi=> CREATE DATABASE "sq-join";
 CREATE DATABASE
 wdi=> \c sql-join
 You are now connected to database "sql-join" as user "wdi".
@@ -161,6 +161,9 @@ it's an `ALTER TABLE` operation.
  table.
 
 ### Code Along : Create a Foreign Key
+
+First you need to create the `people` and `cities` tables and using exactly
+what I just wrote alter the table to have a `born_in_id` column.
 
 Let's try creating some more foreign keys.
 First, let's create an `addresses` table which references the `cities` table.
