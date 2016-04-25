@@ -332,18 +332,6 @@ SELECT p.surname, p.given_name, a.name AS street
 ;
 ```
 
-To limit the results to only those people living in Germany,
-we could write:
-
-```sql
-SELECT p.surname, p.given_name, a.name AS street, c.name AS city, c.country
-  FROM people p
-  INNER JOIN addresses a  ON p.address_id = a.id
-  INNER JOIN cities c     ON a.city_id = c.id
-    WHERE c.country = 'DE'
-;
-```
-
 ### Lab : Read Data Across Related Tables
 
 Run this SQL code to arbitrarily assign pets to people.
