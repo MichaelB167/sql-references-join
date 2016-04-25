@@ -220,7 +220,9 @@ referencing column.
 
 ### Code Along : Relate Rows in Different Tables
 
-We'll start by inserting a new address into the `addresses` table
+First add the same city and person I just added.
+
+Then we'll start by inserting a new address into the `addresses` table
  that's associated with Somerville.
 
 ```sql
